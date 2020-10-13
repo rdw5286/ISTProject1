@@ -8,6 +8,7 @@ public class SpeakerGUI {
 		
 		int x = 0;
 		
+		int y = 2;
 	}
 	
 }
