@@ -22,7 +22,7 @@ public class InfoRecord {
 	private String semesterSpeakerInv;
 	
 	
-// Utilizing default constructor
+	// Utilizing default constructor
 	
 	
 	public void setSpeakerInfo(String speaker_name, String title, String organization, String address, String city, 
@@ -291,10 +291,4 @@ public class InfoRecord {
 	public void setSemesterSpeakerInv(String semesterSpeakerInv) {
 		this.semesterSpeakerInv = semesterSpeakerInv;
 	}
-	
-	
-	
-	
-
-	
 }
