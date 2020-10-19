@@ -5,16 +5,71 @@ package package1;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
 import java.util.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+
 public class SpeakerGUI {
 	
-	public SpeakerGUI() {
-		
+	private String speaker;
+	
+	
+	private JLabel name,
+	email,
+	organization,
+	title,
+	address,
+	city,
+	vDate;
+	
+	private JTextField nameTxt,
+	    emailTxt,
+	    organizationTxt,
+	    titleTxt,
+	    addressTxt,
+	    cityTxt,
+	    vDateTxt;
+	
+	private JButton submitBtn, createReportBtn, searchBtn, clearBtn, updateBtn;
+	private JTextArea display;
+	private ButtonGroup optionGroup = new ButtonGroup();
+	private JRadioButton salaryOption[] = new JRadioButton[4];
+	private String salaryOptionLabels[] = {"Fall","Spring","Summer1","Summer2"};
+	
+	private JPanel enterPersonPanel,
+	radioButtonPanel, 
+	displayPanel,
+	buttonPanel;
+	
+	private InfoRecord a; 
+	
+	
+	public speakerGUI() 
+	{
+	super("Enter Information");
+	setLayout(new GridLayout(4, 4, 3,4));
+	
+	enterPersonPanel = createEnterPerson();
+	add(enterPersonPanel);
+	//radioButtonPanel = createRadioButtonPanel();
+	//add(radioButtonPanel);
+	//displayPanel = createDisplayPanel();
+	//add(displayPanel);
+	//buttonPanel = createButtonPanel();
+	//add(buttonPanel);
+	
+	a = new InfoRecord ();
+	
+	setSize(512, 512);
+	setVisible(true);
+	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	
 	}
+		
+		
 	
 	class ButtonHandler implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
