@@ -25,7 +25,7 @@ public class InfoRecord {
 	// Utilizing default constructor
 	
 	
-	public void setSpeakerInfo(String speaker_name, String title, String organization, String address, String city, 
+	public void setSpeakerInfo(String speaker_name, String title, String organization, String a8ddress, String city, 
 			String email) {
 		this.speaker_name = speaker_name;
 		this.title = title;

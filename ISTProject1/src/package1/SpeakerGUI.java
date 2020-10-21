@@ -5,72 +5,213 @@ package package1;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
 import java.util.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-
-public class SpeakerGUI {
-	
-	private String speaker;
-	
-	
+// SpeakerGUI Class
+public class SpeakerGUI extends JFrame {
 	private JLabel name,
-	email,
-	organization,
-	title,
-	address,
-	city,
-	vDate;
-	
-	private JTextField nameTxt,
-	    emailTxt,
-	    organizationTxt,
-	    titleTxt,
-	    addressTxt,
-	    cityTxt,
-	    vDateTxt;
-	
-	private JButton submitBtn, createReportBtn, searchBtn, clearBtn, updateBtn;
+    			   email,
+    			   organization,
+    			   title,
+    			   address,
+    			   city,
+    			   vDate,
+    			   course,
+    			   section,
+    			   faculty_name,
+    			   semester;
+    
+	private JTextField spkNameTF,
+        			   spkEmailTF,
+        			   spkOrgTF,
+        			   spkTitleTF,
+        			   spkAddressTF,
+        			   spkCityTF,
+        			   vDateTxt,
+        			   monthTF,
+        			   dayTF,
+        			   yearTF,
+        			   fclNameTF,
+        			   fclCourseTF,
+        			   fclSectionTF; 
+
+	private JButton AutoButton, 
+     				submitButton, 
+     				reportButton, 
+     				searchButton, 
+     				clearButton, 
+     				updateButton;
 	private JTextArea display;
 	private ButtonGroup optionGroup = new ButtonGroup();
-	private JRadioButton salaryOption[] = new JRadioButton[4];
-	private String salaryOptionLabels[] = {"Fall","Spring","Summer1","Summer2"};
-	
+	private JRadioButton semesterOption[] = new JRadioButton[4];
+	private String semesterOptionLabels[] = {"Fall","Spring","Summer1","Summer2"};
+
 	private JPanel enterPersonPanel,
-	radioButtonPanel, 
-	displayPanel,
-	buttonPanel;
-	
+    			   radioButtonPanel, 
+    			   displayPanel,
+    			   buttonPanel;
+
 	private InfoRecord a; 
-	
-	
-	public speakerGUI() 
-	{
-	super("Enter Information");
-	setLayout(new GridLayout(4, 4, 3,4));
-	
-	enterPersonPanel = createEnterPerson();
-	add(enterPersonPanel);
-	//radioButtonPanel = createRadioButtonPanel();
-	//add(radioButtonPanel);
-	//displayPanel = createDisplayPanel();
-	//add(displayPanel);
-	//buttonPanel = createButtonPanel();
-	//add(buttonPanel);
-	
-	a = new InfoRecord ();
-	
-	setSize(512, 512);
-	setVisible(true);
-	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	
+	private Boolean check;
+
+	public SpeakerGUI() {
+		super("Enter Information");
+		setLayout(new GridLayout(4, 4, 4,4));
+
+		enterPersonPanel = createEnterContent();
+		add(enterPersonPanel);
+		radioButtonPanel = createRadioButtonPanel();
+		add(radioButtonPanel);
+		displayPanel = createDisplayPanel();
+		add(displayPanel);
+		buttonPanel = createButtonPanel();
+		add(buttonPanel);
+		
+		a = new InfoRecord ();
+		check = false;
+		
+		setSize(512, 512);
+		setVisible(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
 	}
-		
-		
 	
+	// Panel Methods
+	public JPanel createEnterContent() 
+ 	{
+ 		name = new JLabel("Name: ",SwingConstants.RIGHT);
+ 		organization = new JLabel("Organization: ",SwingConstants.RIGHT);
+ 		address = new JLabel("Address: ",SwingConstants.RIGHT);
+ 		vDate = new JLabel("Visiting Date: ",SwingConstants.RIGHT);
+ 		title = new JLabel("Title: ",SwingConstants.RIGHT);
+ 		email = new JLabel("Email: ",SwingConstants.RIGHT);
+ 		city = new JLabel("City: ",SwingConstants.RIGHT);
+ 		
+ 		spkNameTF = new JTextField(25);
+ 		spkEmailTF = new JTextField(25);		
+ 		spkOrgTF = new JTextField(25);
+ 		spkTitleTF = new JTextField(25);
+ 		spkAddressTF = new JTextField(25);
+ 		spkCityTF = new JTextField(25);
+ 		vDateTxt = new JTextField(25);	
+ 		
+ 		AutoButton = new JButton("Autofill");
+ 	  
+        enterPersonPanel = new JPanel();
+ 		enterPersonPanel.setLayout(new GridLayout(4,6,4,4));
+ 		enterPersonPanel.setBorder(BorderFactory.createTitledBorder("Speaker Information"));
+ 		enterPersonPanel.setBackground(Color.lightGray);
+ 		enterPersonPanel.add(name);
+ 	    enterPersonPanel.add(spkNameTF);
+ 	    enterPersonPanel.add(email);
+		enterPersonPanel.add(spkEmailTF);
+ 		enterPersonPanel.add(organization);
+ 		enterPersonPanel.add(spkOrgTF);
+ 		enterPersonPanel.add(title);
+ 		enterPersonPanel.add(spkTitleTF);
+ 		enterPersonPanel.add(address);
+ 	    enterPersonPanel.add(spkAddressTF);
+ 		enterPersonPanel.add(city);
+ 		enterPersonPanel.add(spkCityTF);
+		enterPersonPanel.add(vDate);
+ 	    enterPersonPanel.add(vDateTxt);
+ 	    enterPersonPanel.add(AutoButton);
+ 		return enterPersonPanel;
+ 	} 
+     
+    public JPanel createRadioButtonPanel() 
+ 	{
+    	faculty_name = new JLabel("Name: ",SwingConstants.RIGHT);
+  		course = new JLabel("Course: ",SwingConstants.RIGHT);
+  		section = new JLabel("Section: ",SwingConstants.RIGHT);
+ 		semester = new JLabel("Semester: ",SwingConstants.RIGHT);
+
+  		fclNameTF = new JTextField(20);
+  		fclCourseTF = new JTextField(20);		
+  		fclSectionTF = new JTextField(20);
+ 		
+ 		radioButtonPanel = new JPanel();
+ 		radioButtonPanel.setLayout(new GridLayout(1,2));
+ 		radioButtonPanel.setBorder(BorderFactory.createTitledBorder("Faculty Information"));
+ 		radioButtonPanel.setBackground(Color.lightGray);
+ 		
+ 		JPanel fclEntryPanel = new JPanel();
+ 		fclEntryPanel.setLayout(new GridLayout(3,2,4,10));
+ 		fclEntryPanel.setBackground(Color.lightGray);
+ 		fclEntryPanel.add(faculty_name);
+ 		fclEntryPanel.add(fclNameTF);
+ 		fclEntryPanel.add(course); 		
+ 		fclEntryPanel.add(fclCourseTF);
+ 		fclEntryPanel.add(section);
+ 		fclEntryPanel.add(fclSectionTF);
+ 		radioButtonPanel.add(fclEntryPanel);
+        
+    	JPanel semesterPanel = new JPanel();
+    	semesterPanel.setLayout(new GridLayout(4,2));
+ 		semesterPanel.setBackground(Color.lightGray);
+    	semesterPanel.add(semester);
+ 		for(int i = 0; i < semesterOption.length-1; i++)
+ 		{
+ 			semesterOption[i] = new JRadioButton(semesterOptionLabels[i]);
+ 			semesterOption[i].setBackground(Color.lightGray);
+ 			semesterPanel.add(semesterOption[i]);
+ 	 		semesterPanel.add(new JLabel(""));
+ 			optionGroup.add(semesterOption[i]);
+ 		}
+ 		int i2 = semesterOption.length-1;
+ 		semesterOption[i2] = new JRadioButton(semesterOptionLabels[i2]);
+ 		semesterOption[i2].setBackground(Color.lightGray);
+ 		semesterPanel.add(semesterOption[i2]);
+ 		optionGroup.add(semesterOption[i2]);
+ 		semesterOption[0].setSelected(true);
+ 		radioButtonPanel.add(semesterPanel);
+ 		
+ 		return radioButtonPanel;
+ 	}
+      
+    public JPanel createButtonPanel() 
+ 	{
+ 		ButtonHandler handler = new ButtonHandler();
+ 		buttonPanel = new JPanel();
+ 		buttonPanel.setLayout(new GridLayout(4,6,7,8));
+ 		buttonPanel.setBorder(BorderFactory.createTitledBorder(""));
+ 		buttonPanel .setBackground(Color.lightGray);
+ 		
+ 		submitButton = new JButton("Submit");
+ 		buttonPanel.add(submitButton);
+ 		submitButton.addActionListener(handler);
+ 		
+ 		reportButton = new JButton("Create Report");
+ 		buttonPanel.add(reportButton);
+ 		
+ 		searchButton = new JButton("Search");
+ 		buttonPanel.add(searchButton);
+ 		
+ 		updateButton = new JButton("UPDATE");
+ 		buttonPanel.add(updateButton);
+ 		
+ 		clearButton = new JButton("Clear");
+ 		buttonPanel.add(clearButton);
+ 		
+ 		return buttonPanel;
+ 	}
+     
+ 	public JPanel createDisplayPanel()
+ 	{
+ 		displayPanel = new JPanel();
+ 		displayPanel.setBorder(BorderFactory.createTitledBorder(""));
+ 		displayPanel.setBackground(Color.LIGHT_GRAY);
+ 		display = new JTextArea(50, 50);
+ 		display.setEditable(false);
+ 		displayPanel.add(display);
+ 		
+ 		return displayPanel;
+ 	}
+	
+	// ButtonHandler Class
 	class ButtonHandler implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String oldSpkName = "";
@@ -97,11 +238,12 @@ public class SpeakerGUI {
 						monthStr = "" + month;
 					}
 					if (day < 10) {
-						monthStr = "0" + day;
+						dayStr = "0" + day;
 					}
 					else {
-						monthStr = "" + day;
+						dayStr = "" + day;
 					}
+					yearStr = "" + year;
 					// Set Speaking Date & Current Date
 					String myDate = monthStr + "/" + dayStr + "/" + yearStr;
 					LocalDateTime localDateTime = LocalDateTime.parse(myDate,DateTimeFormatter.ofPattern("MM/dd/yyyy"));
@@ -119,7 +261,13 @@ public class SpeakerGUI {
 						InfoRecord newRecord = new InfoRecord();
 						newRecord.setSpeakerInfo(spkNameTF.getText(),spkTitleTF.getText(),spkOrgTF.getText(),
 												spkAddressTF.getText(),spkCityTF.getText(),spkEmailTF.getText());
-						newRecord.setFacultyInfo(fclNameTF.getText(),fclCourseTF.getText(),fclSectionTF.getText());
+						String semester = "";
+						for (int i = 0; i<semesterOption.length; i++) {
+							if (semesterOption[i].isSelected()) {
+								semester = semesterOption[i].getText();
+							}
+						}
+						newRecord.setFacultyInfo(fclNameTF.getText(),fclCourseTF.getText(),fclSectionTF.getText(),semester);
 						newRecord.setDate(month,day,year);
 						
 						// Determine Submit Style
@@ -174,9 +322,11 @@ public class SpeakerGUI {
 				 */
 				
 				// Change Program Variables
+				/*
 				oldSpkName = dataName;
 				oldDate = dataDate;
 				check = true;
+				*/
 			}
 		}
 	}
