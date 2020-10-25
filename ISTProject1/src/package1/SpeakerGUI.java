@@ -54,8 +54,11 @@ public class SpeakerGUI extends JFrame {
     			   displayPanel,
     			   buttonPanel;
 
-	private InfoRecord a; 
+	private InfoRecord a;
+	// Database Object Reference Here
 	private Boolean check;
+	private String oldGift;
+	private int oldRecordPos;
 
 	public SpeakerGUI() {
 		super("Enter Information");
@@ -214,8 +217,10 @@ public class SpeakerGUI extends JFrame {
 	// ButtonHandler Class
 	class ButtonHandler implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			String oldSpkName = "";
-			String oldDate = "";
+			// Open Database
+			/* Connect to database */
+			
+			// Determine Source
 			Object source = e.getSource();
 			if (submitButton.equals(source)) {
 				// Submit Information
@@ -270,13 +275,25 @@ public class SpeakerGUI extends JFrame {
 						newRecord.setFacultyInfo(fclNameTF.getText(),fclCourseTF.getText(),fclSectionTF.getText(),semester);
 						newRecord.setDate(month,day,year);
 						
+						String recordGift = "";
 						// Determine Submit Style
 						if (check) {
-							/* Delete database info */
+							// Modify Database
+							/* Modify database record using new database info and old gift choice. */
+							recordGift = oldGift;
+						}
+						else {
+							// Choose Gift
+							/* Search through database for all occurrences of speaker and obtain the gifts they have received. */
+							String[] prevGifts = {""};
+							recordGift = chooseGift(prevGifts);
+						
+							// Save Information
+							/* Database Class & Info Pass Here. Send all info of speaker and faculty, as well as the gift chosen. */
 						}
 						
-						// Save Information
-						/* Database Class & Info Pass Here */
+						// Display Recorded Information
+						/* Use toString method from InfoRecord, and add in the gift choice at the end. */
 					}
 				} catch(NumberFormatException error) {
 					JOptionPane.showMessageDialog(null, error.toString(), "Invalid Date", JOptionPane.ERROR_MESSAGE);
@@ -311,24 +328,47 @@ public class SpeakerGUI extends JFrame {
 				 * information is printed out. If there is more than 1, the user will chose which record they are interested 
 				 * in (Based on course and section)
 				 */
+				
+				// Display Information
 			}
 			else {
 				// Update Info
 				/* Search through database and add all occurrences of name and date. Once the record is found (using the 
 				 * method described in the searchButton action), we will set a check variable to 1 to change the way we 
-				 * submit the information. Next, we will input all needed info into the TFs and then let the user edit 
-				 * them. Once the submit button is pressed, the old record will be deleted and the new information shall 
-				 * be added.
+				 * submit the information and save the record's position. Next, we will input all needed info into the TFs and 
+				 * then let the user edit them. Once the submit button is pressed, the old record will be updated to contain 
+				 * the new information.
 				 */
 				
-				// Change Program Variables
+				// Modify Program State
 				/*
-				oldSpkName = dataName;
-				oldDate = dataDate;
+				oldRecordPos = // Get record row
+				oldGift = // Old Gift
 				check = true;
 				*/
 			}
+			
+			// Close Database
+			/* Disconnect from Database */
 		}
+	}
+	
+	// Methods
+	public String chooseGift(String[] gifts) {
+		String gift;
+		if (gifts.length > 2) {
+			gift = gifts[gifts.length-3];
+		}
+		else if (gifts.length == 2) {
+			gift = "Penn State Portfolio Binder";
+		}
+		else if (gifts.length == 1) {
+			gift = "Compact Umbrella with Penn State Logo";
+		}
+		else {
+			gift = "Penn State Coffee Mug with Hershey Kisses";
+		}
+		return gift;
 	}
 	
 	/**
