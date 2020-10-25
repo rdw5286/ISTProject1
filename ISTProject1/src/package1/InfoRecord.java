@@ -13,7 +13,7 @@ public class InfoRecord {
 	private int year;
 	private String semester;
 	private int timesVisited;
-	private String[] gifts;
+	private String gift;
 	
 	
 	private String faculty_name;
@@ -93,9 +93,25 @@ public class InfoRecord {
 		return "Speaker Name: " + speaker_name + "\n " + "Title: " + title + "\n" + "Organization: " +
 		organization + "\n" + "Address: " + address + "\n" + "City: " + city + "\n" + "Email: " + email + "\n" + "Date: " +
 		getDate() + "\n" + "Semester: " + semester + "\n\n\n" + "Faculty Member in charge: " + faculty_name + "\n" + "Course: "	+
-		course + "\n" + "Section: " + section;
+		course + "\n" + "Section: " + section + "\n" + "Gift: " + gift;
 		
 	}
+	
+	/**
+	 * @return the gift
+	 */
+	public String getGift() {
+		return gift;
+	}
+	
+	/**
+	 * 
+	 * @param newGift Sets the new gift for the record
+	 */
+	public void setGift(String newGift) {
+		gift = newGift;
+	}
+	
 	/**
 	 * @return the speaker_name
 	 */

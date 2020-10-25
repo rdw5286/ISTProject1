@@ -275,25 +275,33 @@ public class SpeakerGUI extends JFrame {
 						newRecord.setFacultyInfo(fclNameTF.getText(),fclCourseTF.getText(),fclSectionTF.getText(),semester);
 						newRecord.setDate(month,day,year);
 						
-						String recordGift = "";
 						// Determine Submit Style
 						if (check) {
 							// Modify Database
-							/* Modify database record using new database info and old gift choice. */
-							recordGift = oldGift;
+							newRecord.setGift(oldGift);
+							/* Modify database record using new database info and old gift choice. Call update 
+							 * method that uses the InfoRecord object we create using the TF info and old gift. */
+							
+							// Reset Program State
+							check = false;
 						}
 						else {
 							// Choose Gift
-							/* Search through database for all occurrences of speaker and obtain the gifts they have received. */
+							/* Search through database for all occurrences of speaker and obtain the gifts they have 
+							 * received. Use method searchGifts in database class. */
 							String[] prevGifts = {""};
-							recordGift = chooseGift(prevGifts);
+							newRecord.setGift(chooseGift(prevGifts));
 						
 							// Save Information
-							/* Database Class & Info Pass Here. Send all info of speaker and faculty, as well as the gift chosen. */
+							/* Database Class & Info Pass Here. Send all info of speaker and faculty, as well as the 
+							 * gift chosen. Call addRecord method in database class to add the new row of information. */
 						}
 						
 						// Display Recorded Information
-						/* Use toString method from InfoRecord, and add in the gift choice at the end. */
+						/* Use toString method from InfoRecord. Mention that the permit request was sent. */
+						
+						// Clear Text Fields
+						clearTFS();
 					}
 				} catch(NumberFormatException error) {
 					JOptionPane.showMessageDialog(null, error.toString(), "Invalid Date", JOptionPane.ERROR_MESSAGE);
@@ -301,24 +309,14 @@ public class SpeakerGUI extends JFrame {
 			}
 			else if (clearButton.equals(source)) {
 				// Clear Text Fields
-				spkNameTF.setText("");
-				spkEmailTF.setText("");
-				spkOrgTF.setText("");
-				spkTitleTF.setText("");
-				spkAddressTF.setText("");
-				spkCityTF.setText("");
-				fclNameTF.setText("");
-				fclCourseTF.setText("");
-				fclSectionTF.setText("");
-				monthTF.setText("");
-				dayTF.setText("");
-				yearTF.setText("");
+				clearTFS();
 			}
 			else if (reportButton.equals(source)) {
 				// Create Report
 				/* Gather information and create a InfoRecord object for each row of the database. Afterward, call the 
 				 * toString method for the object and copy the text over to a txt file. Do this process for all rows of the 
-				 * database, and the report will be complete.
+				 * database, and the report will be complete. Start at the first record in which the fall or new semester of the 
+				 * year first gets mentioned.
 				 */
 			}
 			else if (searchButton.equals(source)) {
@@ -326,18 +324,19 @@ public class SpeakerGUI extends JFrame {
 				/* Search through database and add all occurrences of name and date. After searching, if the record occurs 
 				 * 0 times, the program will output that the information is not recorded. If there is 1 record, then the 
 				 * information is printed out. If there is more than 1, the user will chose which record they are interested 
-				 * in (Based on course and section)
+				 * in (Based on course and section).
 				 */
 				
 				// Display Information
+				/* Use toString method from InfoRecord. */
 			}
 			else {
 				// Update Info
-				/* Search through database and add all occurrences of name and date. Once the record is found (using the 
-				 * method described in the searchButton action), we will set a check variable to 1 to change the way we 
-				 * submit the information and save the record's position. Next, we will input all needed info into the TFs and 
-				 * then let the user edit them. Once the submit button is pressed, the old record will be updated to contain 
-				 * the new information.
+				/* Search through database and add all occurrences of the speaker's name and exact date. Once the record 
+				 * is found (using the method described in the searchButton action), we will set a check variable to 1 to 
+				 * change the way we submit the information and save the record's position. Next, we will input all needed 
+				 * info into the TFs and then let the user edit them. Once the submit button is pressed, the old record will 
+				 * be updated to contain the new information.
 				 */
 				
 				// Modify Program State
@@ -354,6 +353,22 @@ public class SpeakerGUI extends JFrame {
 	}
 	
 	// Methods
+	public void clearTFS() {
+		spkNameTF.setText("");
+		spkEmailTF.setText("");
+		spkOrgTF.setText("");
+		spkTitleTF.setText("");
+		spkAddressTF.setText("");
+		spkCityTF.setText("");
+		fclNameTF.setText("");
+		fclCourseTF.setText("");
+		fclSectionTF.setText("");
+		monthTF.setText(""); // Check up on with Jiahao
+		dayTF.setText("");
+		yearTF.setText("");
+	}
+	
+	
 	public String chooseGift(String[] gifts) {
 		String gift;
 		if (gifts.length > 2) {
@@ -391,7 +406,7 @@ public class SpeakerGUI extends JFrame {
 			JOptionPane.showMessageDialog(null, "Nonexistant Date Entered", "Invalid Date", JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
-		if (month == 2 && ((day > 29 && (year % 4 == 0)) || (day > 28 && (year % 4 == 0)))) {
+		if (month == 2 && ((day > 29 && (year % 4 == 0)) || (day > 28 && (year % 4 != 0)))) {
 			// Invalid February Date
 			JOptionPane.showMessageDialog(null, "Nonexistant Date Entered", "Invalid Date", JOptionPane.WARNING_MESSAGE);
 			return false;
