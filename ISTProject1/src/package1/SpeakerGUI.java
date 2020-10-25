@@ -4,6 +4,8 @@ package package1;
 // Imports
 import java.awt.*;
 import java.awt.event.*;
+
+import javax.sound.midi.MidiDevice.Info;
 import javax.swing.*;
 import java.util.Date;
 import java.time.LocalDateTime;
@@ -317,6 +319,11 @@ public class SpeakerGUI extends JFrame {
 				 * toString method for the object and copy the text over to a txt file. Do this process for all rows of the 
 				 * database, and the report will be complete. Start at the first record in which the fall or new semester of the 
 				 * year first gets mentioned.
+				 * 
+				 * Steps:
+				 * Loop through whole database using getRowInfo and stop at database length using tableLength method. For 
+				 * each loop, create an InfoRecord object based on the row Info. Call the toString method for each object 
+				 * and write it to the text file.
 				 */
 			}
 			else if (searchButton.equals(source)) {
@@ -325,6 +332,11 @@ public class SpeakerGUI extends JFrame {
 				 * 0 times, the program will output that the information is not recorded. If there is 1 record, then the 
 				 * information is printed out. If there is more than 1, the user will chose which record they are interested 
 				 * in (Based on course and section).
+				 * 
+				 * Steps:
+				 * Call a method in the database class to get the row info for each row. The loop will be in this class, 
+				 * simply using a method that gets info for each row of information. After the loop is done, this search method
+				 * will check the length, and then perform the action needed mentioned above.
 				 */
 				
 				// Display Information
