@@ -387,13 +387,13 @@ public class SpeakerGUI extends JFrame {
 			gift = gifts[gifts.length-3];
 		}
 		else if (gifts.length == 2) {
-			gift = "Penn State Portfolio Binder";
+			gift = "PS Portfolio Binder";
 		}
 		else if (gifts.length == 1) {
-			gift = "Compact Umbrella with Penn State Logo";
+			gift = "Compact Umbrella with PS Logo";
 		}
 		else {
-			gift = "Penn State Coffee Mug with Hershey Kisses";
+			gift = "PS Coffee Mug with Hershey Kisses";
 		}
 		return gift;
 	}
