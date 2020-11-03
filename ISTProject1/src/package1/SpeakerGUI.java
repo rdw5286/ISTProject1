@@ -4,9 +4,11 @@ package package1;
 // Imports
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 
-import javax.sound.midi.MidiDevice.Info;
 import javax.swing.*;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -14,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 
 // SpeakerGUI Class
 public class SpeakerGUI extends JFrame {
+	// GUI Components
 	private JLabel name,
     			   email,
     			   organization,
@@ -24,7 +27,8 @@ public class SpeakerGUI extends JFrame {
     			   course,
     			   section,
     			   faculty_name,
-    			   semester;
+    			   semester,
+    			   exampleDate;
     
 	private JTextField spkNameTF,
         			   spkEmailTF,
@@ -32,7 +36,6 @@ public class SpeakerGUI extends JFrame {
         			   spkTitleTF,
         			   spkAddressTF,
         			   spkCityTF,
-        			   vDateTxt,
         			   monthTF,
         			   dayTF,
         			   yearTF,
@@ -40,8 +43,7 @@ public class SpeakerGUI extends JFrame {
         			   fclCourseTF,
         			   fclSectionTF; 
 
-	private JButton AutoButton, 
-     				submitButton, 
+	private JButton submitButton, 
      				reportButton, 
      				searchButton, 
      				clearButton, 
@@ -49,23 +51,28 @@ public class SpeakerGUI extends JFrame {
 	private JTextArea display;
 	private ButtonGroup optionGroup = new ButtonGroup();
 	private JRadioButton semesterOption[] = new JRadioButton[4];
-	private String semesterOptionLabels[] = {"Fall","Spring","Summer1","Summer2"};
+	private String semesterOptionLabels[] = {"Fall","Spring","Summer 1","Summer 2"};
 
 	private JPanel enterPersonPanel,
     			   radioButtonPanel, 
     			   displayPanel,
     			   buttonPanel;
-
-	private InfoRecord a;
-	// Database Object Reference Here
+	
+	// Private Variables
+	private int oldRecordPosition;
 	private Boolean check;
 	private String oldGift;
-	private int oldRecordPos;
-
+	
+	// Constructor
+	/**
+	 * SpeakerGUI Constructor used to initialize and create the interface for the program
+	 */
 	public SpeakerGUI() {
-		super("Enter Information");
-		setLayout(new GridLayout(4, 4, 4,4));
-
+		// Create JFrame
+		super("School of Business Administration");
+		setLayout(new GridLayout(4, 4, 4, 4));
+		
+		// Create Panels
 		enterPersonPanel = createEnterContent();
 		add(enterPersonPanel);
 		radioButtonPanel = createRadioButtonPanel();
@@ -75,36 +82,47 @@ public class SpeakerGUI extends JFrame {
 		buttonPanel = createButtonPanel();
 		add(buttonPanel);
 		
-		a = new InfoRecord ();
+		// Set Class Variables
 		check = false;
+		oldGift = "";
+		oldRecordPosition = -1;
 		
+		// Setup JFrame
 		setSize(512, 512);
-		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
+		setVisible(true);
 	}
 	
 	// Panel Methods
+	/**
+	 * Creates the speaker info panel containing all labels and textfields regarding the content input for the speaker
+	 * @return The speaker panel
+	 */
 	public JPanel createEnterContent() 
  	{
- 		name = new JLabel("Name: ",SwingConstants.RIGHT);
+ 		// Define Labels
+		name = new JLabel("Name: ",SwingConstants.RIGHT);
  		organization = new JLabel("Organization: ",SwingConstants.RIGHT);
  		address = new JLabel("Address: ",SwingConstants.RIGHT);
  		vDate = new JLabel("Visiting Date: ",SwingConstants.RIGHT);
  		title = new JLabel("Title: ",SwingConstants.RIGHT);
  		email = new JLabel("Email: ",SwingConstants.RIGHT);
  		city = new JLabel("City: ",SwingConstants.RIGHT);
+ 		exampleDate = new JLabel("Month/Day/Year");
  		
+ 		// Define TextFields
  		spkNameTF = new JTextField(25);
  		spkEmailTF = new JTextField(25);		
  		spkOrgTF = new JTextField(25);
  		spkTitleTF = new JTextField(25);
  		spkAddressTF = new JTextField(25);
  		spkCityTF = new JTextField(25);
- 		vDateTxt = new JTextField(25);	
+ 		monthTF = new JTextField(2);
+ 		dayTF = new JTextField(2);
+ 		yearTF = new JTextField(4);
  		
- 		AutoButton = new JButton("Autofill");
- 	  
+ 		// Add Components to Panel
         enterPersonPanel = new JPanel();
  		enterPersonPanel.setLayout(new GridLayout(4,6,4,4));
  		enterPersonPanel.setBorder(BorderFactory.createTitledBorder("Speaker Information"));
@@ -121,28 +139,46 @@ public class SpeakerGUI extends JFrame {
  	    enterPersonPanel.add(spkAddressTF);
  		enterPersonPanel.add(city);
  		enterPersonPanel.add(spkCityTF);
-		enterPersonPanel.add(vDate);
- 	    enterPersonPanel.add(vDateTxt);
- 	    enterPersonPanel.add(AutoButton);
+ 		enterPersonPanel.add(vDate);
+ 		
+ 		// Date TextFields
+ 		JPanel datePanel = new JPanel();
+ 		datePanel.setLayout(new GridLayout(1,3,3,1));
+ 		datePanel.setBackground(Color.lightGray);
+ 		datePanel.add(monthTF);
+ 		datePanel.add(dayTF);
+ 		datePanel.add(yearTF);
+ 	    enterPersonPanel.add(datePanel);
+ 	    enterPersonPanel.add(exampleDate);
+ 	    
+ 	    // Return Panel
  		return enterPersonPanel;
  	} 
-     
+    
+	/**
+	 * Creates the faculty info panel containing all input spaces for the information required by the faculty
+	 * @return The faculty panel
+	 */
     public JPanel createRadioButtonPanel() 
  	{
+    	// Define Labels
     	faculty_name = new JLabel("Name: ",SwingConstants.RIGHT);
   		course = new JLabel("Course: ",SwingConstants.RIGHT);
   		section = new JLabel("Section: ",SwingConstants.RIGHT);
  		semester = new JLabel("Semester: ",SwingConstants.RIGHT);
-
+ 		
+ 		// Define TextFields
   		fclNameTF = new JTextField(20);
   		fclCourseTF = new JTextField(20);		
   		fclSectionTF = new JTextField(20);
  		
+  		// Define Panel
  		radioButtonPanel = new JPanel();
  		radioButtonPanel.setLayout(new GridLayout(1,2));
  		radioButtonPanel.setBorder(BorderFactory.createTitledBorder("Faculty Information"));
  		radioButtonPanel.setBackground(Color.lightGray);
  		
+ 		// Define TextField Panel & Add Components
  		JPanel fclEntryPanel = new JPanel();
  		fclEntryPanel.setLayout(new GridLayout(3,2,4,10));
  		fclEntryPanel.setBackground(Color.lightGray);
@@ -154,6 +190,7 @@ public class SpeakerGUI extends JFrame {
  		fclEntryPanel.add(fclSectionTF);
  		radioButtonPanel.add(fclEntryPanel);
         
+ 		// Define Semester Panel & Add Components
     	JPanel semesterPanel = new JPanel();
     	semesterPanel.setLayout(new GridLayout(4,2));
  		semesterPanel.setBackground(Color.lightGray);
@@ -174,63 +211,98 @@ public class SpeakerGUI extends JFrame {
  		semesterOption[0].setSelected(true);
  		radioButtonPanel.add(semesterPanel);
  		
+ 		// Return Panel
  		return radioButtonPanel;
  	}
-      
+    
+    /**
+     * Creates the button panel used to store all buttons which perform the program's actions
+     * @return The button panel
+     */
     public JPanel createButtonPanel() 
  	{
- 		ButtonHandler handler = new ButtonHandler();
+ 		// Create Panel
+    	ButtonHandler handler = new ButtonHandler();
  		buttonPanel = new JPanel();
  		buttonPanel.setLayout(new GridLayout(4,6,7,8));
  		buttonPanel.setBorder(BorderFactory.createTitledBorder(""));
  		buttonPanel .setBackground(Color.lightGray);
  		
+ 		// Add Components
  		submitButton = new JButton("Submit");
  		buttonPanel.add(submitButton);
  		submitButton.addActionListener(handler);
  		
  		reportButton = new JButton("Create Report");
  		buttonPanel.add(reportButton);
+ 		reportButton.addActionListener(handler);
  		
  		searchButton = new JButton("Search");
  		buttonPanel.add(searchButton);
+ 		searchButton.addActionListener(handler);
  		
- 		updateButton = new JButton("UPDATE");
+ 		updateButton = new JButton("Update");
  		buttonPanel.add(updateButton);
+ 		updateButton.addActionListener(handler);
  		
  		clearButton = new JButton("Clear");
  		buttonPanel.add(clearButton);
+ 		clearButton.addActionListener(handler);
  		
+ 		// Return Panel
  		return buttonPanel;
  	}
-     
+    
+    /**
+     * Creates the display panel used by the search method, returning the information on the record found
+     * @return The display panel
+     */
  	public JPanel createDisplayPanel()
  	{
+ 		// Create Panel & Add Components
  		displayPanel = new JPanel();
  		displayPanel.setBorder(BorderFactory.createTitledBorder(""));
  		displayPanel.setBackground(Color.LIGHT_GRAY);
- 		display = new JTextArea(50, 50);
+ 		display = new JTextArea(10,30);
  		display.setEditable(false);
- 		displayPanel.add(display);
+ 		JScrollPane scroll = new JScrollPane(display);
+ 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+ 		scroll.setPreferredSize(new Dimension(500,100));
+ 		displayPanel.add(scroll);
  		
+ 		// Return Panel
  		return displayPanel;
  	}
 	
 	// ButtonHandler Class
 	class ButtonHandler implements ActionListener {
+		/**
+		 * Default method used to catch all actions performed by the program
+		 */
 		public void actionPerformed(ActionEvent e) {
 			// Open Database
-			/* Connect to database */
+			database infoDB = new database();
 			
 			// Determine Source
 			Object source = e.getSource();
 			if (submitButton.equals(source)) {
 				// Submit Information
 				try {
+					// Check Text Fields
+					String[] entries = {spkNameTF.getText().trim(), spkEmailTF.getText().trim(),spkCityTF.getText().trim(),
+							spkAddressTF.getText().trim(),spkTitleTF.getText().trim(),spkOrgTF.getText().trim(),
+							fclNameTF.getText().trim(),fclCourseTF.getText().trim(),fclSectionTF.getText().trim()};
+					for (String entry: entries) {
+						if (entry.equals("")) {
+							JOptionPane.showMessageDialog(null, "A Text Field is Empty", "Empty Field", JOptionPane.INFORMATION_MESSAGE);
+							return;
+						}
+					}
+					
 					// Get Speaking Date
 					int month = Integer.parseInt(monthTF.getText());
 					int day = Integer.parseInt(dayTF.getText());
-					int year = Integer.parseInt(dayTF.getText());
+					int year = Integer.parseInt(yearTF.getText());
 					// Check Speaking Date
 					if(!checkDate(month,day,year)) {
 						return;
@@ -252,15 +324,16 @@ public class SpeakerGUI extends JFrame {
 					}
 					yearStr = "" + year;
 					// Set Speaking Date & Current Date
-					String myDate = monthStr + "/" + dayStr + "/" + yearStr;
-					LocalDateTime localDateTime = LocalDateTime.parse(myDate,DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-					long speakTime = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();	
+					String myDate = yearStr + "-" + monthStr + "-" + dayStr + "T07:00:00.00";
+					LocalDateTime localDateTime = LocalDateTime.parse(myDate);
+					long speakTime = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 					Date date = new Date();
 					long curTime = date.getTime();
 					
 					// Check Speaking Date VS Current Date
 					final int TIME_DIF = 1000*(7*24*60*60);
-					if (TIME_DIF > curTime - speakTime) {
+					System.out.println(TIME_DIF);
+					if (TIME_DIF > (speakTime - curTime)) {
 						JOptionPane.showMessageDialog(null, "Current date must be at least 1 week before speaking date.", "Invalid Date", JOptionPane.WARNING_MESSAGE);
 					}
 					else {
@@ -281,32 +354,42 @@ public class SpeakerGUI extends JFrame {
 						if (check) {
 							// Modify Database
 							newRecord.setGift(oldGift);
-							/* Modify database record using new database info and old gift choice. Call update 
-							 * method that uses the InfoRecord object we create using the TF info and old gift. */
+							infoDB.updateInfo(newRecord.getSpeaker_name(), newRecord.getEmail(), newRecord.getOrganization(), 
+									newRecord.getTitle(), newRecord.getAddress(), newRecord.getCity(), month, day, year,
+									newRecord.getFaculty_name(), newRecord.getCourse(), newRecord.getSection(), 
+									newRecord.getSemesterSpeakerInv(), newRecord.getGift(), oldRecordPosition);
 							
 							// Reset Program State
 							check = false;
 						}
 						else {
 							// Choose Gift
-							/* Search through database for all occurrences of speaker and obtain the gifts they have 
-							 * received. Use method searchGifts in database class. */
-							String[] prevGifts = {""};
-							newRecord.setGift(chooseGift(prevGifts));
+							ArrayList<String> prevGifts = infoDB.returnGift(newRecord.getSpeaker_name());
+							if (prevGifts != null) {
+								newRecord.setGift(chooseGift(prevGifts));
 						
-							// Save Information
-							/* Database Class & Info Pass Here. Send all info of speaker and faculty, as well as the 
-							 * gift chosen. Call addRecord method in database class to add the new row of information. */
+								// Save Information
+								infoDB.addSpkInfo(newRecord.getSpeaker_name(), newRecord.getEmail(), newRecord.getOrganization(), 
+									newRecord.getTitle(), newRecord.getAddress(), newRecord.getCity(), month, day, year,
+									newRecord.getFaculty_name(), newRecord.getCourse(), newRecord.getSection(), 
+									newRecord.getSemesterSpeakerInv(), newRecord.getGift());
+							} 
+							else {
+								JOptionPane.showMessageDialog(null, "Unable to Add Record", "Program Error", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
 						}
 						
 						// Display Recorded Information
-						/* Use toString method from InfoRecord. Mention that the permit request was sent. */
+						JOptionPane.showMessageDialog(null, "Record Submitted Successfully & Permit Request Sent.\n\n Recorded Info:\n" + newRecord.toString(), "Record Submitted", JOptionPane.INFORMATION_MESSAGE);
 						
 						// Clear Text Fields
 						clearTFS();
 					}
 				} catch(NumberFormatException error) {
-					JOptionPane.showMessageDialog(null, error.toString(), "Invalid Date", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, error.getMessage(), "Invalid Date", JOptionPane.ERROR_MESSAGE);
+				} catch(Exception error) {
+					JOptionPane.showMessageDialog(null, error.getMessage(), "Invalid Info", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			else if (clearButton.equals(source)) {
@@ -314,57 +397,194 @@ public class SpeakerGUI extends JFrame {
 				clearTFS();
 			}
 			else if (reportButton.equals(source)) {
-				// Create Report
-				/* Gather information and create a InfoRecord object for each row of the database. Afterward, call the 
-				 * toString method for the object and copy the text over to a txt file. Do this process for all rows of the 
-				 * database, and the report will be complete. Start at the first record in which the fall or new semester of the 
-				 * year first gets mentioned.
-				 * 
-				 * Steps:
-				 * Loop through whole database using getRowInfo and stop at database length using tableLength method. For 
-				 * each loop, create an InfoRecord object based on the row Info. Call the toString method for each object 
-				 * and write it to the text file.
-				 */
+				 //creates a new InfoRecord array object called recordList
+				 int reportYear = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter Report Year (2020-2021 -> 2020)", "Generate Report", JOptionPane.QUESTION_MESSAGE));
+				 
+				 ArrayList<InfoRecord> recordList = infoDB.getDatabase(reportYear);
+				 
+				 if (recordList != null) {
+				 // declaring a new empty string to hold all of the records 
+				 String list = "";
+				 
+				 // for loop to loop through each row of database
+				 for (int i = 0; i < recordList.size(); i++) 
+				 {
+					 //assigning each record to list and adding a new line
+					 list = list + "Record #" + (i+1) + "\n" + recordList.get(i).toString() + "\n\n\n"; 
+				 }
+				 
+				 //creating a new BufferedWriter object and creating a try catch
+				 //creating a new file called Record.txt if it does not already exist
+				 try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("D:\\Record.txt"), "utf-8"))) {
+						writer.write(list); //writing all of the records to the file 
+				 } catch (IOException f) {
+						JOptionPane.showMessageDialog(null, f.toString(), "Unable to Write to File", JOptionPane.ERROR_MESSAGE);
+						f.printStackTrace();
+				 }
+				 }
+				 else {
+					 JOptionPane.showMessageDialog(null, "Unable to Generate Report", "Program Error", JOptionPane.ERROR_MESSAGE);
+				 }
 			}
 			else if (searchButton.equals(source)) {
 				// Search Speaker
-				/* Search through database and add all occurrences of name and date. After searching, if the record occurs 
-				 * 0 times, the program will output that the information is not recorded. If there is 1 record, then the 
-				 * information is printed out. If there is more than 1, the user will chose which record they are interested 
-				 * in (Based on course and section).
-				 * 
-				 * Steps:
-				 * Call a method in the database class to get the row info for each row. The loop will be in this class, 
-				 * simply using a method that gets info for each row of information. After the loop is done, this search method
-				 * will check the length, and then perform the action needed mentioned above.
-				 */
+				String searchName = JOptionPane.showInputDialog(null, "Enter Speaker Name:", "Search Terms", JOptionPane.QUESTION_MESSAGE);
+				String searchDate = "";
+				int searchMonth = -1, searchDay = -1, searchYear = -1;
+				try {
+					
+					// These lines make up a form for inputting the date
+					searchDate = JOptionPane.showInputDialog(null, "Enter Visiting Date (YYYY-MM-DD):", "Search Terms", JOptionPane.QUESTION_MESSAGE);
+					LocalDateTime searchDateForm = LocalDateTime.parse(searchDate+"T07:00:00.00");
+					searchMonth = searchDateForm.getMonthValue();
+					searchDay = searchDateForm.getDayOfMonth();
+					searchYear = searchDateForm.getYear();   
+					
+					// if statement that checks if the date is in the valid format
+					if (!checkDate(searchMonth, searchDay, searchYear)) {
+						// Invalid Date
+						searchDate = "";
+					}
+				} catch (Exception e1) {
+					searchDate = "";
+				}
+				while (searchDate.equals("")) {
+					try {
+						searchDate = JOptionPane.showInputDialog(null, "Enter Valid Visiting Date (YYYY-MM-DD):", "Invalid Entry", JOptionPane.WARNING_MESSAGE);
+						LocalDateTime searchDateForm = LocalDateTime.parse(searchDate+"T07:00:00.00");
+						searchMonth = searchDateForm.getMonthValue();
+						searchDay = searchDateForm.getDayOfMonth();
+						searchYear = searchDateForm.getYear();
+						if (!checkDate(searchMonth, searchDay, searchYear)) {
+							// Invalid Date
+							searchDate = "";
+						}
+					} catch(Exception e2) {
+						searchDate = "";
+					}
+				}
 				
-				// Display Information
-				/* Use toString method from InfoRecord. */
+				// Find Record(s)
+				ArrayList<InfoRecord> searchRecords = infoDB.searchInfo(searchName, searchMonth, searchDay, searchYear, false);
+				// Determine Search Result
+				if (searchRecords != null) {
+				if (searchRecords.size() == 0) {
+					// No Matching Record
+					JOptionPane.showMessageDialog(null, "No Records Match Search Terms, Canceling Search", "Search Result", JOptionPane.INFORMATION_MESSAGE);
+				}
+				else if (searchRecords.size() == 1) {
+					// One Matching Record
+					display.setText(searchRecords.get(0).toString()); 
+				}
+				else {
+					// Multiple Matching Records
+					int pos;
+					String[] options = new String[searchRecords.size()];
+					for (int i = 0; i < searchRecords.size(); i++) {
+						options[i] = "Course: " + searchRecords.get(i).getCourse() + "-" + searchRecords.get(i).getSection();
+					}
+					// Ask user to select correct record.
+					pos = JOptionPane.showOptionDialog(null, "Multiple Records Found, Choose Class & Section", "Multiple Records", 
+							JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+					
+					// Modify Program State
+					if (pos != -1) {
+						display.setText(searchRecords.get(pos).toString()); 
+					}
+					else {
+						JOptionPane.showMessageDialog(null, "No Selected Record, Cancelling Search", "Search Result", JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
+				}
+				else {
+					JOptionPane.showMessageDialog(null, "Unable to Search for Record", "Program Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 			else {
-				// Update Info
-				/* Search through database and add all occurrences of the speaker's name and exact date. Once the record 
-				 * is found (using the method described in the searchButton action), we will set a check variable to 1 to 
-				 * change the way we submit the information and save the record's position. Next, we will input all needed 
-				 * info into the TFs and then let the user edit them. Once the submit button is pressed, the old record will 
-				 * be updated to contain the new information.
-				 */
+				// Get Search Terms
+				String searchName = JOptionPane.showInputDialog(null, "Enter Speaker Name:", "Search Terms", JOptionPane.QUESTION_MESSAGE);
+				String searchDate = "";
+				int searchMonth = -1, searchDay = -1, searchYear = -1;
+				try {
+					searchDate = JOptionPane.showInputDialog(null, "Enter Visiting Date (YYYY-MM-DD):", "Search Terms", JOptionPane.QUESTION_MESSAGE);
+					LocalDateTime searchDateForm = LocalDateTime.parse(searchDate+"T07:00:00.00");
+					searchMonth = searchDateForm.getMonthValue();
+					searchDay = searchDateForm.getDayOfMonth();
+					searchYear = searchDateForm.getYear();
+					if (!checkDate(searchMonth, searchDay, searchYear)) {
+						// Invalid Date
+						searchDate = "";
+					}
+				} catch (Exception e1) {
+					searchDate = "";
+				}
+				while (searchDate.equals("")) {
+					try {
+						searchDate = JOptionPane.showInputDialog(null, "Enter Valid Visiting Date (YYYY-MM-DD):", "Invalid Entry", JOptionPane.WARNING_MESSAGE);
+						LocalDateTime searchDateForm = LocalDateTime.parse(searchDate+"T07:00:00.00");
+						searchMonth = searchDateForm.getMonthValue();
+						searchDay = searchDateForm.getDayOfMonth();
+						searchYear = searchDateForm.getYear();
+						if (!checkDate(searchMonth, searchDay, searchYear)) {
+							// Invalid Date
+							searchDate = "";
+						}
+					} catch(Exception e2) {
+						searchDate = "";
+					}
+				}
 				
-				// Modify Program State
-				/*
-				oldRecordPos = // Get record row
-				oldGift = // Old Gift
-				check = true;
-				*/
+				// Find Record(s)
+				ArrayList<InfoRecord> oldRecords = infoDB.searchInfo(searchName, searchMonth, searchDay, searchYear, true);
+				// Determine Search Result
+				if (oldRecords != null) {
+				if (oldRecords.size() == 0) {
+					// No Matching Record
+					JOptionPane.showMessageDialog(null, "No Records Match Search Terms, Cancelling Update", "Update Result", JOptionPane.INFORMATION_MESSAGE);
+				}
+				else if (oldRecords.size() == 1) {
+					// One Matching Record
+					oldRecordPosition = oldRecords.get(0).getRowID();
+					oldGift = oldRecords.get(0).getGift();
+					check = true;
+					// Fill in Text Fields
+					fillFields(oldRecords.get(0));
+				}
+				else {
+					// Multiple Matching Records
+					int pos;
+					String[] options = new String[oldRecords.size()];
+					for (int i = 0; i < oldRecords.size(); i++) {
+						options[i] = "Course: " + oldRecords.get(i).getCourse() + "-" + oldRecords.get(i).getSection();
+					}
+					// Ask user to select correct record.
+					pos = JOptionPane.showOptionDialog(null, "Multiple Records Found, Choose Class & Section", "Multiple Records", 
+							JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+					
+					// Modify Program State
+					if (pos != -1) {
+						oldRecordPosition = oldRecords.get(pos).getRowID();
+						oldGift = oldRecords.get(pos).getGift();
+						check = true;
+						// Fill in Text Fields
+						fillFields(oldRecords.get(pos));
+					}
+					else {
+						JOptionPane.showMessageDialog(null, "No Selected Record, Cancelling Update", "Update Result", JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
+				}
+				else {
+					JOptionPane.showMessageDialog(null, "Unable to Update Record", "Program Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
-			
-			// Close Database
-			/* Disconnect from Database */
 		}
 	}
 	
 	// Methods
+	/**
+	 * Clears the text fields
+	 */
 	public void clearTFS() {
 		spkNameTF.setText("");
 		spkEmailTF.setText("");
@@ -375,21 +595,27 @@ public class SpeakerGUI extends JFrame {
 		fclNameTF.setText("");
 		fclCourseTF.setText("");
 		fclSectionTF.setText("");
-		monthTF.setText(""); // Check up on with Jiahao
+		monthTF.setText("");
 		dayTF.setText("");
 		yearTF.setText("");
+		semesterOption[0].setSelected(true);
 	}
 	
-	
-	public String chooseGift(String[] gifts) {
+	/**
+	 * Determines which gift to give a speaker when visiting
+	 * 
+	 * @param gifts List of old gifts the speaker has received
+	 * @return The selected gift for the speaker's visit
+	 */
+	public String chooseGift(ArrayList<String> gifts) {
 		String gift;
-		if (gifts.length > 2) {
-			gift = gifts[gifts.length-3];
+		if (gifts.size() > 2) {
+			gift = gifts.get(gifts.size()-3) + "";
 		}
-		else if (gifts.length == 2) {
+		else if (gifts.size() == 2) {
 			gift = "PS Portfolio Binder";
 		}
-		else if (gifts.length == 1) {
+		else if (gifts.size() == 1) {
 			gift = "Compact Umbrella with PS Logo";
 		}
 		else {
@@ -426,6 +652,29 @@ public class SpeakerGUI extends JFrame {
 		
 		// Date is Valid
 		return true;
+	}
+	
+	/**
+	 * Fills out the text fields using the information given in the passed record. Used for the update method to see the 
+	 * information in an old record.
+	 * 
+	 * @param record  Old Record
+	 */
+	public void fillFields(InfoRecord record) {
+		// Text Fields
+		spkNameTF.setText(record.getSpeaker_name());
+		spkEmailTF.setText(record.getEmail());
+		spkOrgTF.setText(record.getOrganization());
+		spkCityTF.setText(record.getCity());
+		spkTitleTF.setText(record.getTitle());
+		spkAddressTF.setText(record.getAddress());
+		fclNameTF.setText(record.getFaculty_name());
+		fclCourseTF.setText(record.getCourse());
+		fclSectionTF.setText(record.getSection());
+		dayTF.setText(record.getDay()+"");
+		monthTF.setText(record.getMonth()+"");
+		yearTF.setText(record.getYear()+"");
+		// Radio Buttons
 	}
 	
 	/**

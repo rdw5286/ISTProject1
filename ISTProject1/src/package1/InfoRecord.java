@@ -11,8 +11,7 @@ public class InfoRecord {
 	private int day;
 	private int month;
 	private int year;
-	private String semester;
-	private int timesVisited;
+	private int rowID;
 	private String gift;
 	
 	
@@ -25,8 +24,8 @@ public class InfoRecord {
 	// Utilizing default constructor
 	
 	
-	public void setSpeakerInfo(String speaker_name, String title, String organization, String a8ddress, String city, 
-			String email) {
+	public void setSpeakerInfo(String speaker_name, String email, String organization, String title, String address, 
+			String city) {
 		this.speaker_name = speaker_name;
 		this.title = title;
 		this.organization = organization;
@@ -82,7 +81,7 @@ public class InfoRecord {
 		spk_date[0] = Integer.toString(month);
 		spk_date[1] = Integer.toString(day);
 		spk_date[2] = Integer.toString(year);
-
+		
 		return spk_date;
 		
 		
@@ -90,9 +89,10 @@ public class InfoRecord {
 	}
 	
 	public String toString() {
-		return "Speaker Name: " + speaker_name + "\n " + "Title: " + title + "\n" + "Organization: " +
+		String[] date = getDate();
+		return "Speaker Name: " + speaker_name + "\n" + "Title: " + title + "\n" + "Organization: " +
 		organization + "\n" + "Address: " + address + "\n" + "City: " + city + "\n" + "Email: " + email + "\n" + "Date: " +
-		getDate() + "\n" + "Semester: " + semester + "\n\n\n" + "Faculty Member in charge: " + faculty_name + "\n" + "Course: "	+
+		date[0] + "/" + date[1] + "/" + date[2] +  "\n" + "Semester: " + semesterSpeakerInv + "\n" + "Faculty Member in Charge: " + faculty_name + "\n" + "Course: "	+
 		course + "\n" + "Section: " + section + "\n" + "Gift: " + gift;
 		
 	}
@@ -239,20 +239,6 @@ public class InfoRecord {
 	}
 
 	/**
-	 * @return the semester
-	 */
-	public String getSemester() {
-		return semester;
-	}
-
-	/**
-	 * @param semester the semester to set
-	 */
-	public void setSemester(String semester) {
-		this.semester = semester;
-	}
-
-	/**
 	 * @return the faculty_name
 	 */
 	public String getFaculty_name() {
@@ -306,5 +292,21 @@ public class InfoRecord {
 	 */
 	public void setSemesterSpeakerInv(String semesterSpeakerInv) {
 		this.semesterSpeakerInv = semesterSpeakerInv;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getRowID() {
+		return rowID;
+	}
+	
+	/**
+	 * 
+	 * @param newID
+	 */
+	public void setRowID(int newID) {
+		rowID = newID;
 	}
 }
