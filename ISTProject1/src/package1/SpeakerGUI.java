@@ -1,3 +1,15 @@
+/**
+ * IST 311 Group Project
+ * SpeakerGUI.java
+ * Purpose: This class acts as the GUI class for the ISTProject1 java project. The interface outputs a window containing 
+ * textfields and buttons for the user to interact with depending on their needs. The user can enter information for a record, 
+ * or update/search a record that is in the database. The user can clear the text fields if desired, or generate a report for 
+ * the school year.
+ * 
+ * @author Ryan Ward, Chakra Baskota, Jorden Korn, Jiahao Liang
+ * @version 1.0 11/04/2020
+ */
+
 // Package
 package package1;
 
@@ -5,14 +17,11 @@ package package1;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-
 import javax.swing.*;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
 // SpeakerGUI Class
 public class SpeakerGUI extends JFrame {
@@ -294,7 +303,7 @@ public class SpeakerGUI extends JFrame {
 							fclNameTF.getText().trim(),fclCourseTF.getText().trim(),fclSectionTF.getText().trim()};
 					for (String entry: entries) {
 						if (entry.equals("")) {
-							JOptionPane.showMessageDialog(null, "A Text Field is Empty", "Empty Field", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null, "A Text Field is Empty", "Empty Field", JOptionPane.WARNING_MESSAGE);
 							return;
 						}
 					}
@@ -359,6 +368,9 @@ public class SpeakerGUI extends JFrame {
 									newRecord.getFaculty_name(), newRecord.getCourse(), newRecord.getSection(), 
 									newRecord.getSemesterSpeakerInv(), newRecord.getGift(), oldRecordPosition);
 							
+							// Display Recorded Information
+							JOptionPane.showMessageDialog(null, "Record Updated Successfully.\n\n Recorded Info:\n" + newRecord.toString(), "Record Updated", JOptionPane.INFORMATION_MESSAGE);
+							
 							// Reset Program State
 							check = false;
 						}
@@ -373,15 +385,15 @@ public class SpeakerGUI extends JFrame {
 									newRecord.getTitle(), newRecord.getAddress(), newRecord.getCity(), month, day, year,
 									newRecord.getFaculty_name(), newRecord.getCourse(), newRecord.getSection(), 
 									newRecord.getSemesterSpeakerInv(), newRecord.getGift());
+								
+								// Display Recorded Information
+								JOptionPane.showMessageDialog(null, "Record Submitted Successfully & Permit Request Sent.\n\n Recorded Info:\n" + newRecord.toString(), "Record Submitted", JOptionPane.INFORMATION_MESSAGE);
 							} 
 							else {
 								JOptionPane.showMessageDialog(null, "Unable to Add Record", "Program Error", JOptionPane.ERROR_MESSAGE);
 								return;
 							}
 						}
-						
-						// Display Recorded Information
-						JOptionPane.showMessageDialog(null, "Record Submitted Successfully & Permit Request Sent.\n\n Recorded Info:\n" + newRecord.toString(), "Record Submitted", JOptionPane.INFORMATION_MESSAGE);
 						
 						// Clear Text Fields
 						clearTFS();
@@ -397,30 +409,28 @@ public class SpeakerGUI extends JFrame {
 				clearTFS();
 			}
 			else if (reportButton.equals(source)) {
-				 //creates a new InfoRecord array object called recordList
+				 // Creates a new InfoRecord array object called recordList
 				 int reportYear = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter Report Year (2020-2021 -> 2020)", "Generate Report", JOptionPane.QUESTION_MESSAGE));
-				 
 				 ArrayList<InfoRecord> recordList = infoDB.getDatabase(reportYear);
 				 
 				 if (recordList != null) {
-				 // declaring a new empty string to hold all of the records 
-				 String list = "";
+					 // Declaring a new empty string to hold all of the records 
+					 String list = "";
+					 // For loop to loop through each row of database
+					 for (int i = 0; i < recordList.size(); i++) 
+					 {
+						 //assigning each record to list and adding a new line
+						 list = list + "Record #" + (i+1) + "\n" + recordList.get(i).toString() + "\n\n\n"; 
+					 }
 				 
-				 // for loop to loop through each row of database
-				 for (int i = 0; i < recordList.size(); i++) 
-				 {
-					 //assigning each record to list and adding a new line
-					 list = list + "Record #" + (i+1) + "\n" + recordList.get(i).toString() + "\n\n\n"; 
-				 }
-				 
-				 //creating a new BufferedWriter object and creating a try catch
-				 //creating a new file called Record.txt if it does not already exist
-				 try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("D:\\Record.txt"), "utf-8"))) {
-						writer.write(list); //writing all of the records to the file 
-				 } catch (IOException f) {
-						JOptionPane.showMessageDialog(null, f.toString(), "Unable to Write to File", JOptionPane.ERROR_MESSAGE);
-						f.printStackTrace();
-				 }
+					 // Creating a new BufferedWriter object and creating a try catch
+					 // Creating a new file called Record.txt if it does not already exist
+					 try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("D:\\Record.txt"), "utf-8"))) {
+						 writer.write(list); //writing all of the records to the file 
+					 } catch (IOException f) {
+						 JOptionPane.showMessageDialog(null, f.getMessage(), "Unable to Write to File", JOptionPane.ERROR_MESSAGE);
+						 f.printStackTrace();
+					 }
 				 }
 				 else {
 					 JOptionPane.showMessageDialog(null, "Unable to Generate Report", "Program Error", JOptionPane.ERROR_MESSAGE);
@@ -431,8 +441,7 @@ public class SpeakerGUI extends JFrame {
 				String searchName = JOptionPane.showInputDialog(null, "Enter Speaker Name:", "Search Terms", JOptionPane.QUESTION_MESSAGE);
 				String searchDate = "";
 				int searchMonth = -1, searchDay = -1, searchYear = -1;
-				try {
-					
+				try {	
 					// These lines make up a form for inputting the date
 					searchDate = JOptionPane.showInputDialog(null, "Enter Visiting Date (YYYY-MM-DD):", "Search Terms", JOptionPane.QUESTION_MESSAGE);
 					LocalDateTime searchDateForm = LocalDateTime.parse(searchDate+"T07:00:00.00");
@@ -440,7 +449,7 @@ public class SpeakerGUI extends JFrame {
 					searchDay = searchDateForm.getDayOfMonth();
 					searchYear = searchDateForm.getYear();   
 					
-					// if statement that checks if the date is in the valid format
+					// If statement that checks if the date is in the valid format
 					if (!checkDate(searchMonth, searchDay, searchYear)) {
 						// Invalid Date
 						searchDate = "";
@@ -468,45 +477,46 @@ public class SpeakerGUI extends JFrame {
 				ArrayList<InfoRecord> searchRecords = infoDB.searchInfo(searchName, searchMonth, searchDay, searchYear, false);
 				// Determine Search Result
 				if (searchRecords != null) {
-				if (searchRecords.size() == 0) {
-					// No Matching Record
-					JOptionPane.showMessageDialog(null, "No Records Match Search Terms, Canceling Search", "Search Result", JOptionPane.INFORMATION_MESSAGE);
-				}
-				else if (searchRecords.size() == 1) {
-					// One Matching Record
-					display.setText(searchRecords.get(0).toString()); 
-				}
-				else {
-					// Multiple Matching Records
-					int pos;
-					String[] options = new String[searchRecords.size()];
-					for (int i = 0; i < searchRecords.size(); i++) {
-						options[i] = "Course: " + searchRecords.get(i).getCourse() + "-" + searchRecords.get(i).getSection();
+					if (searchRecords.size() == 0) {
+						// No Matching Record
+						JOptionPane.showMessageDialog(null, "No Records Match Search Terms, Canceling Search", "Search Result", JOptionPane.INFORMATION_MESSAGE);
 					}
-					// Ask user to select correct record.
-					pos = JOptionPane.showOptionDialog(null, "Multiple Records Found, Choose Class & Section", "Multiple Records", 
-							JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-					
-					// Modify Program State
-					if (pos != -1) {
-						display.setText(searchRecords.get(pos).toString()); 
+					else if (searchRecords.size() == 1) {
+						// One Matching Record
+						display.setText(searchRecords.get(0).toString()); 
 					}
 					else {
-						JOptionPane.showMessageDialog(null, "No Selected Record, Cancelling Search", "Search Result", JOptionPane.INFORMATION_MESSAGE);
+						// Multiple Matching Records
+						int pos;
+						String[] options = new String[searchRecords.size()];
+						for (int i = 0; i < searchRecords.size(); i++) {
+							options[i] = "Course: " + searchRecords.get(i).getCourse() + "-" + searchRecords.get(i).getSection();
+						}
+						// Ask user to select correct record.
+						pos = JOptionPane.showOptionDialog(null, "Multiple Records Found, Choose Class & Section", "Multiple Records", 
+								JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+						
+						// Modify Program State
+						if (pos != -1) {
+							display.setText(searchRecords.get(pos).toString()); 
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "No Selected Record, Cancelling Search", "Search Result", JOptionPane.INFORMATION_MESSAGE);
+						}
 					}
-				}
 				}
 				else {
 					JOptionPane.showMessageDialog(null, "Unable to Search for Record", "Program Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			else {
-				// Get Search Terms
-				String searchName = JOptionPane.showInputDialog(null, "Enter Speaker Name:", "Search Terms", JOptionPane.QUESTION_MESSAGE);
+				// Get Search Terms for Update
+				String searchName = JOptionPane.showInputDialog(null, "Enter Old Speaker Name:", "Search Terms", JOptionPane.QUESTION_MESSAGE);
 				String searchDate = "";
 				int searchMonth = -1, searchDay = -1, searchYear = -1;
+				// Check Date
 				try {
-					searchDate = JOptionPane.showInputDialog(null, "Enter Visiting Date (YYYY-MM-DD):", "Search Terms", JOptionPane.QUESTION_MESSAGE);
+					searchDate = JOptionPane.showInputDialog(null, "Enter Old Visiting Date (YYYY-MM-DD):", "Search Terms", JOptionPane.QUESTION_MESSAGE);
 					LocalDateTime searchDateForm = LocalDateTime.parse(searchDate+"T07:00:00.00");
 					searchMonth = searchDateForm.getMonthValue();
 					searchDay = searchDateForm.getDayOfMonth();
@@ -518,6 +528,7 @@ public class SpeakerGUI extends JFrame {
 				} catch (Exception e1) {
 					searchDate = "";
 				}
+				// Loops if Date is Invalid
 				while (searchDate.equals("")) {
 					try {
 						searchDate = JOptionPane.showInputDialog(null, "Enter Valid Visiting Date (YYYY-MM-DD):", "Invalid Entry", JOptionPane.WARNING_MESSAGE);
@@ -538,41 +549,41 @@ public class SpeakerGUI extends JFrame {
 				ArrayList<InfoRecord> oldRecords = infoDB.searchInfo(searchName, searchMonth, searchDay, searchYear, true);
 				// Determine Search Result
 				if (oldRecords != null) {
-				if (oldRecords.size() == 0) {
-					// No Matching Record
-					JOptionPane.showMessageDialog(null, "No Records Match Search Terms, Cancelling Update", "Update Result", JOptionPane.INFORMATION_MESSAGE);
-				}
-				else if (oldRecords.size() == 1) {
-					// One Matching Record
-					oldRecordPosition = oldRecords.get(0).getRowID();
-					oldGift = oldRecords.get(0).getGift();
-					check = true;
-					// Fill in Text Fields
-					fillFields(oldRecords.get(0));
-				}
-				else {
-					// Multiple Matching Records
-					int pos;
-					String[] options = new String[oldRecords.size()];
-					for (int i = 0; i < oldRecords.size(); i++) {
-						options[i] = "Course: " + oldRecords.get(i).getCourse() + "-" + oldRecords.get(i).getSection();
+					if (oldRecords.size() == 0) {
+						// No Matching Record
+						JOptionPane.showMessageDialog(null, "No Records Match Search Terms, Cancelling Update", "Update Result", JOptionPane.INFORMATION_MESSAGE);
 					}
-					// Ask user to select correct record.
-					pos = JOptionPane.showOptionDialog(null, "Multiple Records Found, Choose Class & Section", "Multiple Records", 
-							JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-					
-					// Modify Program State
-					if (pos != -1) {
-						oldRecordPosition = oldRecords.get(pos).getRowID();
-						oldGift = oldRecords.get(pos).getGift();
+					else if (oldRecords.size() == 1) {
+						// One Matching Record
+						oldRecordPosition = oldRecords.get(0).getRowID();
+						oldGift = oldRecords.get(0).getGift();
 						check = true;
 						// Fill in Text Fields
-						fillFields(oldRecords.get(pos));
+						fillFields(oldRecords.get(0));
 					}
 					else {
-						JOptionPane.showMessageDialog(null, "No Selected Record, Cancelling Update", "Update Result", JOptionPane.INFORMATION_MESSAGE);
+						// Multiple Matching Records
+						int pos;
+						String[] options = new String[oldRecords.size()];
+						for (int i = 0; i < oldRecords.size(); i++) {
+							options[i] = "Course: " + oldRecords.get(i).getCourse() + "-" + oldRecords.get(i).getSection();
+						}
+						// Ask user to select correct record.
+						pos = JOptionPane.showOptionDialog(null, "Multiple Records Found, Choose Class & Section", "Multiple Records", 
+								JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+						
+						// Modify Program State
+						if (pos != -1) {
+							oldRecordPosition = oldRecords.get(pos).getRowID();
+							oldGift = oldRecords.get(pos).getGift();
+							check = true;
+							// Fill in Text Fields
+							fillFields(oldRecords.get(pos));
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "No Selected Record, Cancelling Update", "Update Result", JOptionPane.INFORMATION_MESSAGE);
+						}
 					}
-				}
 				}
 				else {
 					JOptionPane.showMessageDialog(null, "Unable to Update Record", "Program Error", JOptionPane.ERROR_MESSAGE);
@@ -674,7 +685,14 @@ public class SpeakerGUI extends JFrame {
 		dayTF.setText(record.getDay()+"");
 		monthTF.setText(record.getMonth()+"");
 		yearTF.setText(record.getYear()+"");
+		
 		// Radio Buttons
+		String semChoice = record.getSemesterSpeakerInv();
+		for (int i = 0; i < semesterOptionLabels.length; i++) {
+			if (semesterOptionLabels[i].equals(semChoice)) {
+				semesterOption[i].setSelected(true);
+			}
+		}
 	}
 	
 	/**
